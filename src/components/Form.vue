@@ -73,6 +73,7 @@
         <input
           id="citizenship"
           @focus="isCitizenshipDropdownOpen = true"
+          v-on:input="debounceInput"
           v-model="formData.citizenship"
         />
         <div
@@ -212,7 +213,8 @@
 import ClickOutside from "vue-click-outside";
 import citizenships from "@/assets/data/citizenships.json";
 import passportTypes from "@/assets/data/passport-types.json";
-// import { debounce } from '../helpers.js';
+// import { debounce } from "../helpers.js";
+import _ from "lodash";
 
 export default {
   directives: {
@@ -243,6 +245,7 @@ export default {
       isPassportTypeDropdownOpen: false,
       allCitizenships: citizenships,
       allPassportTypes: passportTypes,
+      filterKey: "",
     };
   },
   methods: {
@@ -282,16 +285,16 @@ export default {
         prevName: "",
       };
     },
-    onValueChange(e) {
-      this.formData.citizenship = e.target.value;
-    },
+    debounceInput: _.debounce(function () {
+      this.filterKey = this.formData.citizenship;
+    }, 2000),
   },
   computed: {
     citizenshipFilter() {
-      if (this.citizenship === "") return this.allCitizenships;
+      if (this.filterKey === "") return this.allCitizenships;
 
       return this.allCitizenships.filter((city) => {
-        if (city.nationality.includes(this.formData.citizenship)) {
+        if (city.nationality.includes(this.filterKey)) {
           return city;
         }
       });

@@ -5,15 +5,31 @@
     <div class="row">
       <div>
         <label for="surname">Фамилия</label>
-        <input id="surname" type="text" v-model="formData.surname" />
+        <input
+          :class="this.errors.surname && 'red'"
+          id="surname"
+          type="text"
+          v-model="formData.surname"
+        />
+        <span v-if="this.errors.surname">только русские буквы</span>
       </div>
       <div>
         <label for="name">Имя</label>
-        <input id="name" v-model="formData.name" />
+        <input
+          id="name"
+          v-model="formData.name"
+          :class="this.errors.name && 'red'"
+        />
+        <span v-if="this.errors.name">только русские буквы</span>
       </div>
       <div>
         <label for="patronymic">Отчество</label>
-        <input id="patronymic" v-model="formData.patronymic" />
+        <input
+          id="patronymic"
+          v-model="formData.patronymic"
+          :class="this.errors.patronymic && 'red'"
+        />
+        <span v-if="this.errors.patronymic">только русские буквы</span>
       </div>
     </div>
 
@@ -24,14 +40,23 @@
           id="birth-date"
           placeholder="дд.мм.ггг"
           v-model="formData.birthDate"
+          :class="this.errors.birthDate && 'red'"
         />
+        <span v-if="this.errors.birthDate"
+          >валидная дата, не позже сегодняшнего числа</span
+        >
       </div>
     </div>
 
     <div class="row">
       <div>
         <label for="e-mail">E-mail</label>
-        <input id="e-mail" v-model="formData.email" />
+        <input
+          id="e-mail"
+          v-model="formData.email"
+          :class="this.errors.email && 'red'"
+        />
+        <span v-if="this.errors.email">не валидный email</span>
       </div>
     </div>
 
@@ -100,11 +125,21 @@
     >
       <div>
         <label for="passport-serial">Серия паспорта</label>
-        <input id="passport-serial" v-model="formData.passportSerial" />
+        <input
+          id="passport-serial"
+          v-model="formData.passportSerial"
+          :class="this.errors.passportSerial && 'red'"
+        />
+        <span v-if="this.errors.passportSerial">Допустимо 4 цифры</span>
       </div>
       <div>
         <label for="passport-number">Номер паспорта</label>
-        <input id="passport-number" v-model="formData.passportNumber" />
+        <input
+          id="passport-number"
+          v-model="formData.passportNumber"
+          :class="this.errors.passportNumber && 'red'"
+        />
+        <span v-if="this.errors.passportNumber">Допустимо 6 цифр</span>
       </div>
       <div>
         <label for="passport-date">Дата выдачи</label>
@@ -118,11 +153,21 @@
     >
       <div>
         <label for="latin-surname">Фамилия на латинице</label>
-        <input id="latin-surname" v-model="formData.latinSurname" />
+        <input
+          id="latin-surname"
+          v-model="formData.latinSurname"
+          :class="this.errors.latinSurname && 'red'"
+        />
+        <span v-if="this.errors.latinSurname">только английские буквы</span>
       </div>
       <div>
         <label for="latin-name">Имя на латинице</label>
-        <input id="latin-name" v-model="formData.latinName" />
+        <input
+          id="latin-name"
+          v-model="formData.latinName"
+          :class="this.errors.latinName && 'red'"
+        />
+        <span v-if="this.errors.latinName">только английские буквы</span>
       </div>
     </div>
 
@@ -197,11 +242,21 @@
     <div class="row" v-if="formData.nameChange === 'true'">
       <div>
         <label for="prev-surname">Предыдущая фамилия</label>
-        <input id="prev-surname" v-model="formData.prevSurname" />
+        <input
+          id="prev-surname"
+          v-model="formData.prevSurname"
+          :class="this.errors.prevSurname && 'red'"
+        />
+        <span v-if="this.errors.prevSurname">только русские буквы</span>
       </div>
       <div>
         <label for="prev-name">Предыдущее имя</label>
-        <input id="prev-name" v-model="formData.prevName" />
+        <input
+          id="prev-name"
+          v-model="formData.prevName"
+          :class="this.errors.prevName && 'red'"
+        />
+        <span v-if="this.errors.prevName">только русские буквы</span>
       </div>
     </div>
 
@@ -246,6 +301,20 @@ export default {
       allCitizenships: citizenships,
       allPassportTypes: passportTypes,
       filterKey: "",
+      errors: {
+        surname: false,
+        name: false,
+        patronymic: false,
+        prevName: false,
+        prevSurname: false,
+        birthDate: false,
+        email: false,
+        passportSerial: false,
+        passportNumber: false,
+        latinSurname: false,
+        latinName: false,
+      },
+      validation: true,
     };
   },
   methods: {
@@ -264,26 +333,101 @@ export default {
       this.hidePassportTypeDropDown();
     },
     log() {
-      console.log(JSON.stringify(this.formData));
-      this.formData = {
-        surname: "",
-        name: "",
-        patronymic: "",
-        birthDate: "",
-        email: "",
-        sex: "Мужской",
-        citizenship: "",
-        passportSerial: "",
-        passportNumber: "",
-        passportDate: "",
-        latinSurname: "",
-        latinName: "",
-        passportCountry: "",
-        passportType: "",
-        nameChange: "false",
-        prevSurname: "",
-        prevName: "",
-      };
+      if (!this.formData.surname.match(/^[а-яА-ЯёЁ\s]+$/)) {
+        this.errors.surname = true;
+      } else {
+        this.errors.surname = false;
+      }
+
+      if (!this.formData.name.match(/^[а-яА-ЯёЁ\s]+$/)) {
+        this.errors.name = true;
+      } else {
+        this.errors.name = false;
+      }
+
+      if (!this.formData.patronymic.match(/^[а-яА-ЯёЁ\s]+$/)) {
+        this.errors.patronymic = true;
+      } else {
+        this.errors.patronymic = false;
+      }
+
+      if (
+        !this.formData.prevSurname.match(/^[а-яА-ЯёЁ\s]+$/) &&
+        this.formData.nameChange === "true"
+      ) {
+        this.errors.prevSurname = true;
+      } else {
+        this.errors.prevSurname = false;
+      }
+
+      if (
+        !this.formData.prevName.match(/^[а-яА-ЯёЁ\s]+$/) &&
+        this.formData.nameChange === "true"
+      ) {
+        this.errors.prevName = true;
+      } else {
+        this.errors.prevName = false;
+      }
+      if (new Date(this.formData.birthDate).getTime() > Date.now()) {
+        this.errors.birthDate = true;
+      } else {
+        this.errors.birthDate = false;
+      }
+      if (!this.formData.email.match(/^[\w]{1}[\w-.]*@[\w-]+\.[a-z]{2,4}$/i)) {
+        this.errors.email = true;
+      } else {
+        this.errors.email = false;
+      }
+      if (!this.formData.passportSerial.match(/\d{4}$/)) {
+        this.errors.passportSerial = true;
+      } else {
+        this.errors.passportSerial = false;
+      }
+      if (
+        this.formData.citizenship === "Russia" &&
+        !this.formData.passportNumber.match(/\d{6}$/)
+      ) {
+        this.errors.passportNumber = true;
+      } else {
+        this.errors.passportNumber = false;
+      }
+      if (!this.formData.latinSurname.match(/^[a-zA-Z]+$/)) {
+        this.errors.latinSurname = true;
+      } else {
+        this.errors.latinSurname = false;
+      }
+      if (!this.formData.latinName.match(/^[a-zA-Z]+$/)) {
+        this.errors.latinName = true;
+      } else {
+        this.errors.latinName = false;
+      }
+
+      for (const error in this.errors) {
+        if (this.errors[error] === true) {
+          return;
+        } else {
+          console.log(JSON.stringify(this.formData));
+          this.formData = {
+            surname: "",
+            name: "",
+            patronymic: "",
+            birthDate: "",
+            email: "",
+            sex: "Мужской",
+            citizenship: "",
+            passportSerial: "",
+            passportNumber: "",
+            passportDate: "",
+            latinSurname: "",
+            latinName: "",
+            passportCountry: "",
+            passportType: "",
+            nameChange: "false",
+            prevSurname: "",
+            prevName: "",
+          };
+        }
+      }
     },
     debounceInput: _.debounce(function () {
       this.filterKey = this.formData.citizenship;
@@ -324,5 +468,9 @@ export default {
 .passport-type-selector__dropdown {
   max-height: 150px;
   overflow-y: scroll;
+}
+
+.red {
+  border: 2px solid red;
 }
 </style>
